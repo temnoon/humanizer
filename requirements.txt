@@ -1,0 +1,9 @@
+sqlalchemy[asyncio]>=2.0.0
+asyncpg>=0.28.0
+psycopg[binary]>=3.1.12
+pydantic>=2.0.0
+httpx>=0.24.1
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+pgvector>=0.2.0

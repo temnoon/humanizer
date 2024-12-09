@@ -1,0 +1,2 @@
+# here.txt
+A new humanizer folder for a new staret of the project, with PostgreSQL and pgvectors, pydantic typing and maybe pydantic AI

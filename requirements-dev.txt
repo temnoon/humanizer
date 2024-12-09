@@ -1,0 +1,6 @@
+# requirements-dev.txt
+mypy>=1.0.0
+black>=23.0.0
+isort>=5.0.0
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
