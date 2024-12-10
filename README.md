@@ -87,7 +87,8 @@ humanizer db fix-dimensions
 
 ```bash
 # Import conversations
-humanizer import /path/to/file.json
+humanizer import /path/to/conversations.json
+humanizer import /path/to/chat.zip #that contains a conversations.json
 
 # List conversations
 humanizer list conversations --sort messages
