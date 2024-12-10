@@ -8,9 +8,11 @@ from humanizer.cli.list_cmd import list_cmd
 from humanizer.cli.config_cmd import config
 from humanizer.cli.search_cmd import search
 from humanizer.cli.project_cmd import project
+from humanizer.cli.analyze_cmd import analyze_cmd
 from humanizer.utils.logging import get_logger
 from humanizer.cli.types import ClickGroup, ClickHandler
 from humanizer.config import load_config
+from humanizer.cli.export_markdown_cmd import export_cmd
 
 logger = get_logger(__name__)
 
@@ -33,6 +35,8 @@ cli.add_command(list_cmd)
 cli.add_command(config)
 cli.add_command(search)
 cli.add_command(project)
+cli.add_command(analyze_cmd)
+cli.add_command(export_cmd)
 
 if __name__ == '__main__':
     cli()

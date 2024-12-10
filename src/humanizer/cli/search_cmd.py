@@ -17,8 +17,9 @@ def search():
 @click.option('--limit', default=5, help='Number of results')
 @click.option('--min-similarity', default=0.7, type=float, help='Minimum similarity score')
 @click.option('--role', help='Filter by role (user/assistant)')
+@click.option('--uuids-only', is_flag=True, help='Output only UUIDs of results')  # Added this line
 @click.option('--format', type=click.Choice(['text', 'json', 'table']), default='table')
-def semantic(query: str, limit: int, min_similarity: float, role: str, format: str):
+def semantic(query: str, limit: int, min_similarity: float, role: str, uuids_only: bool, format: str):
     """Semantic search using vector similarity"""
     async def run():
         searcher = VectorSearch()
@@ -28,6 +29,12 @@ def semantic(query: str, limit: int, min_similarity: float, role: str, format: s
             min_similarity=min_similarity,
             role=role
         )
+
+        if uuids_only:
+            # Just print UUIDs line by line
+            for r in results:
+                click.echo(str(r['id']))
+            return
 
         if format == 'json':
             import json
@@ -46,7 +53,8 @@ def semantic(query: str, limit: int, min_similarity: float, role: str, format: s
             click.echo(tabulate(rows, headers=headers, tablefmt='psql'))
         else:
             for r in results:
-                click.echo(f"\nSimilarity: {r['similarity']:.3f}")
+                click.echo(f"\nID: {r['id']}")
+                click.echo(f"Similarity: {r['similarity']:.3f}")
                 click.echo(f"Role: {r['role']}")
                 click.echo(f"Content: {r['content'][:200]}...")
                 click.echo(f"Conversation: {r['conversation_id']}")

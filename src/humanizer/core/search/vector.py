@@ -1,5 +1,6 @@
 # src/humanizer/core/search/vector.py
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
+from datetime import datetime
 from sqlalchemy import select, func, and_
 from humanizer.db.models import Message, Content
 from humanizer.db.session import get_session
@@ -14,9 +15,12 @@ class VectorSearch:
         query: str,
         limit: int = 10,
         min_similarity: float = 0.7,
-        role: Optional[str] = None
+        role: Optional[str] = None,
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
+        meta_filter: Optional[Dict[str, Any]] = None
     ) -> List[Dict]:
-        """Search messages using vector similarity"""
+        """Search messages using vector similarity with optional filters"""
         query_embedding = await self.embedding_service.create_embedding(query)
 
         async with get_session() as session:
@@ -26,14 +30,27 @@ class VectorSearch:
             ).where(
                 and_(
                     Message.embedding.is_not(None),
-                    Message.content.notlike('%{"query"%'),  # Filter out JSON-formatted messages
+                    Message.content.is_not(None),
                     Message.content != '',
-                    Message.content.is_not(None)
+                    # Filter out search commands
+                    ~Message.content.ilike('search(%'),
+                    ~Message.content.ilike('search "%'),
+                    # Filter out very short messages
+                    func.length(Message.content) > 50
                 )
             )
 
             if role:
                 stmt = stmt.where(Message.role == role)
+
+            if start_date:
+                stmt = stmt.where(Message.create_time >= start_date)
+            if end_date:
+                stmt = stmt.where(Message.create_time <= end_date)
+
+            if meta_filter:
+                for k, v in meta_filter.items():
+                    stmt = stmt.where(Message.meta_info[k].astext == v)
 
             stmt = stmt.where(
                 Message.embedding.cosine_distance(query_embedding) <= (1 - min_similarity)
@@ -50,7 +67,8 @@ class VectorSearch:
                     "content": msg.Message.content,
                     "role": msg.Message.role,
                     "conversation_id": msg.Message.conversation_id,
-                    "similarity": 1 - msg.distance
+                    "similarity": 1 - msg.distance,
+                    "create_time": msg.Message.create_time
                 }
                 for msg in messages
             ]
