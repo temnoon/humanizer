@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.so
+chat.zip
 .Python
 build/
 develop-eggs/
@@ -24,6 +25,7 @@ wheels/
 venv/
 env/
 ENV/
+.env/
 
 # IDE
 .idea/

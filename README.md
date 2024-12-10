@@ -180,4 +180,4 @@ The project follows PEP 8 guidelines and uses:
 
 ## License
 
-[Your chosen license]
+CC0 1.0 Universal
